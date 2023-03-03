@@ -20,92 +20,29 @@ public class Solver {
         String result = "[";
         isExit = false;
 
+        // System.out.println("node: " + "x "+ node.xIndex + ", y " + node.yIndex + ", z
+        // " + node.zIndex);
+        // -CASO BASE [] -CASO RECUSIVO [S] [N] [E] [W] [U] [D] [S,N] [S,E] [S,W] [E,N]
+        // [E,S] [N,E] [S,N,E] [S,N,W] [S,N,U] [S,N,D] [S,E,N] [S,E,U] [S,E,E]
+        
         while (!isExit) {
-            // System.out.println("node: " + "x "+ node.xIndex + ", y " + node.yIndex + ", z
-            // " + node.zIndex);
-
             node = maze.getStartingSpace();
 
-            if (!isExit)
+            if (!isExit && node.east)
                 result += moveToEast(maze);
-            if (!isExit)
+            if (!isExit && node.south)
                 result += moveToSouth(maze);
-            if (!isExit)
+            if (!isExit && node.up)
                 result += moveToUp(maze);
-            if (!isExit)
+            if (!isExit && node.north)
                 result += moveToNorth(maze);
-            if (!isExit)
+            if (!isExit && node.west)
                 result += moveToWest(maze);
-            if (!isExit)
+            if (!isExit && node.down)
                 result += moveToDown(maze);
 
-            // if (node.east) {
-            // node = maze.moveEast(node);
-            // if (maze.isExitSpace(node.xIndex, node.yIndex, node.zIndex)) {
-            // Node.resetNodesCount();
-            // isExit = true;
-            // return result + "E]";
-            // } else {
-            // result += "E,";
-            // }
-            // }
-
-            // if (node.south) {
-            // node = maze.moveSouth(node);
-            // if (maze.isExitSpace(node.xIndex, node.yIndex, node.zIndex)) {
-            // Node.resetNodesCount();
-            // isExit = true;
-            // return result + "S]";
-            // } else {
-            // result += "S,";
-            // }
-            // }
-
-            // if (node.up) {
-            // node = maze.moveUp(node); // U
-            // if (maze.isExitSpace(node.xIndex, node.yIndex, node.zIndex)) {
-            // Node.resetNodesCount();
-            // isExit = true;
-            // return result + "U]";
-            // } else {
-            // result += "U,";
-            // }
-            // }
-
-            // if (node.north) {
-            // node = maze.moveNorth(node);
-            // if (maze.isExitSpace(node.xIndex, node.yIndex, node.zIndex)) {
-            // Node.resetNodesCount();
-            // isExit = true;
-            // return result + "N]";
-            // } else {
-            // result += "N,";
-            // }
-            // }
-
-            // if (node.west) {
-            // node = maze.moveWest(node);
-            // if (maze.isExitSpace(node.xIndex, node.yIndex, node.zIndex)) {
-            // Node.resetNodesCount();
-            // isExit = true;
-            // return result + "W]";
-            // } else {
-            // result += "W,";
-            // }
-            // }
-
-            // if (node.down) {
-            // node = maze.moveDown(node);
-            // if (maze.isExitSpace(node.xIndex, node.yIndex, node.zIndex)) {
-            // Node.resetNodesCount();
-            // isExit = true;
-            // return result + "D]";
-            // } else {
-            // result += "D,";
-            // }
-            // }
-
-            // isExit = true;
+            // solve(maze);
+            isExit = true;
         }
 
         return result + "]";
@@ -113,7 +50,6 @@ public class Solver {
 
     private String moveToEast(Maze maze) {
         if (node.east) {
-            System.out.println("SI FUNCIONA ==> EAST");
             node = maze.moveEast(node);
 
             if (node.danger)
@@ -132,13 +68,11 @@ public class Solver {
 
     private String moveToSouth(Maze maze) {
         if (node.south) {
-            System.out.println("SI FUNCIONA ==> SOUTH");
             node = maze.moveSouth(node);
 
             if (node.danger)
                 return "";
 
-            System.out.println("SI FUNCIONA ==> SOUTH-1");
             if (maze.isExitSpace(node.xIndex, node.yIndex, node.zIndex)) {
                 isExit = true;
                 Node.resetNodesCount();
