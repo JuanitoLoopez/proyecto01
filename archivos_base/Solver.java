@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /*
     Esta es su clase principal. El unico metodo que debe implementar es
     public String[] solve(Maze maze)
@@ -5,155 +7,88 @@
 */
 
 public class Solver {
-
-    private boolean isExit = false;
-    private Node node;
+    
+    private ArrayList<String> route;
+    private boolean exit = false;
 
     public Solver() {
-        // Sientase libre de implementar el contructor de la forma que usted lo desee
-
+        route = new ArrayList<String>();
     }
 
     public String solve(Maze maze) {
-        // Implemente su metodo aqui. Sientase libre de implementar métodos adicionales
+        route.clear();
+        exit = false;
+        Node startNode = maze.getStartingSpace();
 
-        String result = "[";
-        isExit = false;
+        solveRecursive(maze, startNode, exit);
+        return route.toString().replace(" ", "");
+    }
 
-        // System.out.println("node: " + "x "+ node.xIndex + ", y " + node.yIndex + ", z
-        // " + node.zIndex);
-        // -CASO BASE [] -CASO RECUSIVO [S] [N] [E] [W] [U] [D] [S,N] [S,E] [S,W] [E,N]
-        // [E,S] [N,E] [S,N,E] [S,N,W] [S,N,U] [S,N,D] [S,E,N] [S,E,U] [S,E,E]
+    private boolean solveRecursive(Maze maze, Node currentNode, boolean exit) {
+
+        System.out.print("Result: " + route.toString());
+        System.out.println(" Node: x="+currentNode.xIndex+" y="+currentNode.yIndex+" z="+currentNode.zIndex );
+
+        // Consultamos el siguiente paso
+        if(currentNode.north && maze.moveNorth(currentNode).isExit) {
+            route.add("N");
+            return true;
+        } 
+        if(currentNode.east && maze.moveEast(currentNode).isExit) {
+            route.add("E");
+            return true;
+        } 
+        if(currentNode.south && maze.moveSouth(currentNode).isExit) {
+            route.add("S");
+            return true;
+        } 
+        if(currentNode.west && maze.moveWest(currentNode).isExit) {
+            route.add("W");
+            return true;
+        } 
+        if(currentNode.up && maze.moveUp(currentNode).isExit) {
+            route.add("U");
+            return true;
+        } 
+        if(currentNode.down && maze.moveDown(currentNode).isExit) {
+            route.add("D");
+            return true;
+        }
         
-        while (!isExit) {
-            node = maze.getStartingSpace();
-
-            if (!isExit && node.east)
-                result += moveToEast(maze);
-            if (!isExit && node.south)
-                result += moveToSouth(maze);
-            if (!isExit && node.up)
-                result += moveToUp(maze);
-            if (!isExit && node.north)
-                result += moveToNorth(maze);
-            if (!isExit && node.west)
-                result += moveToWest(maze);
-            if (!isExit && node.down)
-                result += moveToDown(maze);
-
-            // solve(maze);
-            isExit = true;
-        }
-
-        return result + "]";
-    }
-
-    private String moveToEast(Maze maze) {
-        if (node.east) {
-            node = maze.moveEast(node);
-
-            if (node.danger)
-                return "";
-
-            if (maze.isExitSpace(node.xIndex, node.yIndex, node.zIndex)) {
-                isExit = true;
-                Node.resetNodesCount();
-                return "E";
-            } else {
-                return "E,";
+        // Realizamos recursividad
+        if(!exit) {
+            if (currentNode.north && !currentNode.danger && !maze.moveNorth(currentNode).isExit) {
+                route.add("N");
+                exit = solveRecursive( maze, maze.moveNorth(currentNode), exit );
+                if(exit) return true;
+            }
+            if (currentNode.east && !currentNode.danger && !maze.moveEast(currentNode).isExit) {
+                route.add("E");
+                exit = solveRecursive( maze, maze.moveEast(currentNode), exit );
+                if(exit) return true;
+            }
+            if (!exit && currentNode.south && !currentNode.danger && !maze.moveSouth(currentNode).isExit) {
+                route.add("S");
+                exit = solveRecursive( maze, maze.moveSouth(currentNode), exit );
+                if(exit) return true;
+            }
+            if (currentNode.west && !currentNode.danger && !maze.moveWest(currentNode).isExit) {
+                route.add("W");
+                exit = solveRecursive( maze, maze.moveWest(currentNode), exit );
+                if(exit) return true;
+            }
+            if (currentNode.up && !currentNode.danger && !maze.moveUp(currentNode).isExit) {
+                route.add("U");
+                exit = solveRecursive( maze, maze.moveUp(currentNode), exit );
+                if(exit) return true;
+            }
+            if (currentNode.down && !currentNode.danger && !maze.moveDown(currentNode).isExit) {
+                route.add("D");
+                exit = solveRecursive( maze, maze.moveDown(currentNode), exit );
+                if(exit) return true;
             }
         }
-        return "";
+        
+        return false;
     }
-
-    private String moveToSouth(Maze maze) {
-        if (node.south) {
-            node = maze.moveSouth(node);
-
-            if (node.danger)
-                return "";
-
-            if (maze.isExitSpace(node.xIndex, node.yIndex, node.zIndex)) {
-                isExit = true;
-                Node.resetNodesCount();
-                return "S";
-            } else {
-                return "S,";
-            }
-        }
-        return "";
-    }
-
-    private String moveToNorth(Maze maze) {
-        if (node.north) {
-            node = maze.moveNorth(node);
-
-            if (node.danger)
-                return "";
-
-            if (maze.isExitSpace(node.xIndex, node.yIndex, node.zIndex)) {
-                isExit = true;
-                Node.resetNodesCount();
-                return "N";
-            } else {
-                return "N,";
-            }
-        }
-        return "";
-    }
-
-    private String moveToUp(Maze maze) {
-        if (node.up) {
-            node = maze.moveUp(node);
-
-            if (node.danger)
-                return "";
-
-            if (maze.isExitSpace(node.xIndex, node.yIndex, node.zIndex)) {
-                isExit = true;
-                Node.resetNodesCount();
-                return "U";
-            } else {
-                return "U,";
-            }
-        }
-        return "";
-    }
-
-    private String moveToWest(Maze maze) {
-        if (node.west) {
-            node = maze.moveWest(node);
-
-            if (node.danger)
-                return "";
-
-            if (maze.isExitSpace(node.xIndex, node.yIndex, node.zIndex)) {
-                isExit = true;
-                Node.resetNodesCount();
-                return "W";
-            } else {
-                return "W,";
-            }
-        }
-        return "";
-    }
-
-    private String moveToDown(Maze maze) {
-        if (node.down) {
-            node = maze.moveDown(node);
-
-            if (node.danger)
-                return "";
-
-            if (maze.isExitSpace(node.xIndex, node.yIndex, node.zIndex)) {
-                isExit = true;
-                Node.resetNodesCount();
-                return "D";
-            } else {
-                return "D,";
-            }
-        }
-        return "";
-    }
-
 }
